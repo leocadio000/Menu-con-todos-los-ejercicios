@@ -1,0 +1,61 @@
+* { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+body { display: flex; height: 100vh; background: #f4f6f9; overflow: hidden; }
+
+/* Dashboard Layout */
+#sidebar { 
+  width: 260px; 
+  height: 100vh; /* Asegura que ocupe toda la altura de la pantalla */
+  background: #1e293b; 
+  color: white; 
+  padding: 20px 15px; 
+  display: flex; 
+  flex-direction: column; 
+}
+
+#sidebar h2 { font-size: 1.2rem; margin-bottom: 20px; text-align: center; color: #38bdf8; flex-shrink: 0; }
+
+/* Contenedor del menú con Scroll propio */
+#menu-container {
+  flex: 1; /* Ocupa el espacio sobrante entre el título y el botón de cerrar sesión */
+  overflow-y: auto; /* Permite hacer scroll cuando los botones sobrepasan el alto */
+  padding-right: 5px;
+  margin-bottom: 10px;
+}
+
+/* Personalización elegante de la barra de scroll */
+#menu-container::-webkit-scrollbar {
+  width: 5px;
+}
+#menu-container::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+#menu-container button { width: 100%; padding: 12px; margin-bottom: 8px; background: #334155; border: none; color: white; text-align: left; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+#menu-container button:hover { background: #0284c7; }
+
+/* Botón de Cerrar Sesión fijo en la parte inferior */
+#sidebar > button[onclick*="logout"] {
+  margin-top: auto;
+  flex-shrink: 0; /* Evita que el botón se aplaste */
+}
+
+#main-content { flex: 1; padding: 30px; overflow-y: auto; }
+.card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+
+/* Login */
+.login-body { display: flex; align-items: center; justify-content: center; width: 100vw; }
+.login-card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 350px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+.btn { width: 100%; padding: 10px; background: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.btn:hover { background: #0369a1; }
+
+/* Formulario Multipaso */
+.step { display: none; }
+.step.active { display: block; }
+.btn-group { display: flex; gap: 10px; margin-top: 15px; }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+table, th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+th { background-color: #f1f5f9; }
