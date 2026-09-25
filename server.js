@@ -175,3 +175,28 @@ app.post('/api/validar-cedula', (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Servidor ejecutándose en http://localhost:${PORT}`));
+// Middleware para verificar si el usuario está autenticado
+function requereAutenticacion(req, res, next) {
+    if (req.session && req.session.usuario) {
+        return next();
+    }
+    res.redirect('/login');
+}
+
+// Ruta para procesar el inicio de sesión
+app.post('/login', (req, res) => {
+    const { usuario, password } = req.body;
+
+    // Credenciales de prueba requeridas
+    if (usuario === 'admin@test.com' && password === '123456') {
+        req.session.usuario = usuario;
+        return res.redirect('/');
+    }
+
+    res.send('Credenciales incorrectas. <a href="/login">Volver a intentar</a>');
+});
+
+// Proteger la ruta principal
+app.get('/', requereAutenticacion, (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
+});
