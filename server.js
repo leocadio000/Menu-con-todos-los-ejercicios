@@ -3,17 +3,16 @@ const session = require('express-session');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const path = require('path');
-const { DatabaseSync } = require('node:sqlite'); // módulo SQLite incluido en Node.js (v22.5+), sin instalación
+const { DatabaseSync } = require('node:sqlite'); // módulo SQLite incluido en Node.js (v22.5+)
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ------------------- BASE DE DATOS (SQLite) -------------------
-// El archivo lab_prog3.db se crea automáticamente en la raíz del proyecto.
 const dbPath = path.join(__dirname, 'lab_prog3.db');
 const db = new DatabaseSync(dbPath);
 
-// Crear tablas si no existen (equivalente a database.sql)
+// Crear tablas si no existen
 db.exec(`
   CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,7 +35,7 @@ db.exec(`
   );
 `);
 
-// Sembrar usuario admin por defecto (admin / admin123) con contraseña hasheada
+// Sembrar usuario admin por defecto (admin / admin123)
 const usuarioExistente = db.prepare('SELECT * FROM usuarios WHERE username = ?').get('admin');
 if (!usuarioExistente) {
   const hash = bcrypt.hashSync('admin123', 10);
@@ -56,16 +55,16 @@ app.use(session({
   cookie: { maxAge: 3600000 } // 1 hora
 }));
 
-// Middleware de autenticación
+// Middleware de autenticación para APIs
 function autenticado(req, res, next) {
-  if (req.session.usuario) {
+  if (req.session && req.session.usuario) {
     next();
   } else {
     res.status(401).json({ error: 'No autorizado. Por favor inicia sesión.' });
   }
 }
 
-// ------------------- RUTAS DE AUTENTICACIÓN (Login) -------------------
+// ------------------- RUTAS DE AUTENTICACIÓN -------------------
 
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
@@ -89,7 +88,7 @@ app.get('/api/logout', (req, res) => {
 });
 
 app.get('/api/check-auth', (req, res) => {
-  if (req.session.usuario) {
+  if (req.session && req.session.usuario) {
     res.json({ autenticado: true, usuario: req.session.usuario });
   } else {
     res.json({ autenticado: false });
@@ -138,7 +137,6 @@ app.post('/api/registro-multipaso', autenticado, (req, res) => {
   }
 });
 
-// Listado de registros guardados (útil para verificar que la BD está funcionando)
 app.get('/api/registros', autenticado, (req, res) => {
   const registros = db.prepare('SELECT * FROM registros_formulario ORDER BY id DESC').all();
   res.json(registros);
@@ -174,29 +172,5 @@ app.post('/api/validar-cedula', (req, res) => {
   });
 });
 
-app.listen(PORT, () => console.log(`Servidor ejecutándose en http://localhost:${PORT}`));
-// Middleware para verificar si el usuario está autenticado
-function requereAutenticacion(req, res, next) {
-    if (req.session && req.session.usuario) {
-        return next();
-    }
-    res.redirect('/login');
-}
-
-// Ruta para procesar el inicio de sesión
-app.post('/login', (req, res) => {
-    const { usuario, password } = req.body;
-
-    // Credenciales de prueba requeridas
-    if (usuario === 'admin@test.com' && password === '123456') {
-        req.session.usuario = usuario;
-        return res.redirect('/');
-    }
-
-    res.send('Credenciales incorrectas. <a href="/login">Volver a intentar</a>');
-});
-
-// Proteger la ruta principal
-app.get('/', requereAutenticacion, (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
-});
+// ------------------- INICIO DEL SERVIDOR -------------------
+app.listen(PORT, () => console.log(`Servidor ejecutándose en el puerto ${PORT}`));
