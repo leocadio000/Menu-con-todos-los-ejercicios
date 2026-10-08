@@ -22,6 +22,12 @@
     </div>
   </div>
 
-  <script src="js/main.js"></script>
+ <script>
+  // Este script se ejecuta de inmediato antes de cargar el contenido visual
+  if (localStorage.getItem('isLoggedIn') !== 'true') {
+    // Si no ha iniciado sesión, lo mandamos de patitas a la calle (al login)
+    window.location.href = 'login.html'; 
+  }
+</script>
 </body>
 </html>
