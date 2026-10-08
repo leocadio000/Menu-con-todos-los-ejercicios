@@ -27,31 +27,24 @@
   </div>
 
   <script>
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const usernameInput = document.getElementById('username').value;
-    const passwordInput = document.getElementById('password').value;
-
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: usernameInput, password: passwordInput })
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.href = 'index.html';
+      } else {
+        document.getElementById('errorMsg').innerText = data.message;
+      }
     });
-    
-    const data = await res.json();
-    
-    if (data.success) {
-      // Guardamos una marca en el navegador de que el usuario inició sesión correctamente
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('username', usernameInput);
-      
-      // Redireccionamos a la página protegida
-      window.location.href = 'index.html';
-    } else {
-      document.getElementById('errorMsg').innerText = data.message;
-    }
-  });
-</script>
+  </script>
 </body>
 </html>
